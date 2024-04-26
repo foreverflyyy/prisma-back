@@ -7,12 +7,6 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = merge(common, {
     mode: 'development',
-    devServer: {
-        static: path.resolve(__dirname, 'dist'),
-        port: 3000,
-        hot: true,
-        open: true,
-    },
     module: {
         rules: [
             {
@@ -29,6 +23,7 @@ module.exports = merge(common, {
         ],
     },
     devServer: {
+        static: path.resolve(__dirname, 'dist'),
         historyApiFallback: true,
         proxy: {
             '/api': 'http://localhost:5000',

@@ -17,5 +17,17 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
-  }
+  },
+  "include": [
+    "src/**/*",
+    "src/**/*.d.ts",
+    "env.d.ts"
+  ],
+  "exclude": [
+    "./dist",
+    "node_modules",
+    "**/*.spec.ts",
+    "src/**/*.schema.ts",
+    "src/**/*.dto.ts"
+  ]
 }

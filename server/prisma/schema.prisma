@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Employee {
+  id          String                @id @default(uuid())
+  name        String
+  firm        Firm                  @relation(fields: [firmId], references: [id])
+  firmId      String
+
+  @@map("employees")
+}
+
+model Software {
+  id                String          @id @default(uuid())
+  name              String          @unique
+  firm              Firm?           @relation(fields: [firmId], references: [id])
+  firmId            String?
+  version           String
+  valueId           String?
+  installations     Installation[]
+  updated_at        DateTime        @updatedAt
+
+  @@map("softwares")
+  @@index([firmId], name: "firmId")
+}
+
+model Firm {
+  id                String          @id @default(uuid())
+  name              String
+  employees         Employee[]
+  softwares         Software[]
+
+  @@map("firms")
+}
+
+model Installation {
+  id                String          @id @default(uuid())
+  software          Software?       @relation(fields: [softwareId], references: [id])
+  softwareId        String?
+  installationDate  DateTime        @default(now())
+  cabinet           Int
+  typeOperation     TypeOperation   @default(INSTALL)
+
+  @@map("installations")
+}
+
+model Value {
+  id                String          @id @default(uuid())
+  name              String
+
+  @@map("values")
+}
+
+enum TypeOperation {
+  INSTALL
+  UPDATE
+}
