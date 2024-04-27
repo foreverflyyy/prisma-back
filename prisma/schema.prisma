@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Employee {
+  id            String         @id @default(uuid())
+  name          String
+  firm          Firm           @relation(fields: [firmId], references: [id])
+  firmId        String
+  developments  Software[]
+  installations Installation[]
+
+  @@map("employees")
+}
+
+model Firm {
+  id        String     @id @default(uuid())
+  name      String
+  employees Employee[]
+  softwares Software[]
+
+  @@map("firms")
+}
+
+model EmployeesOnSoftwares {
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId String
+  software   Software @relation(fields: [softwareId], references: [id])
+  softwareId String
+  assignedAt DateTime @default(now())
+  assignedBy String
+
+  @@id([postId, categoryId])
+}
+
+model Software {
+  id            String         @id @default(uuid())
+  name          String         @unique
+  firm          Firm           @relation(fields: [firmId], references: [id])
+  firmId        String
+  developers    Employee[]
+  version       String
+  valueId       String?
+  value         Value?         @relation(fields: [valueId], references: [id])
+  installations Installation[]
+  updated_at    DateTime       @updatedAt
+
+  @@map("softwares")
+}
+
+model Installation {
+  id               String        @id @default(uuid())
+  software         Software?     @relation(fields: [softwareId], references: [id])
+  softwareId       String?
+  employee         Employee?     @relation(fields: [employeeId], references: [id])
+  employeeId       String?
+  installationDate DateTime      @default(now())
+  cabinet          Int
+  typeOperation    TypeOperation @default(INSTALL)
+
+  @@map("installations")
+}
+
+model Value {
+  id        String     @id @default(uuid())
+  name      String
+  softwares Software[]
+
+  @@map("values")
+}
+
+enum TypeOperation {
+  INSTALL
+  UPDATE
+}
